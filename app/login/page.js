@@ -28,7 +28,7 @@ const Login = () => {
             password: password,
         }
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/login-handler`, {
+            const response = await fetch(`/api/user/login-handler`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
