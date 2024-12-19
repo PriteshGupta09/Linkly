@@ -97,7 +97,7 @@ export async function POST(request) {
         
         }
 
-         SendGmail()
+        await SendGmail()
 
         return NextResponse.json(
             { message: 'Email Sent Successfully' },
