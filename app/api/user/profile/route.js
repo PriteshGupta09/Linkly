@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/model/User';
+import User from '@/model/User';
+import Post from '@/model/Post'
 import jwt from "jsonwebtoken";
 
 export async function POST(request) {
@@ -10,7 +12,7 @@ export async function POST(request) {
         return NextResponse.json({ message: 'Please Register or Login into Your Account for make Unlimited Short Links' },
             { status: 400 })
     }
-    dbConnect()
+   await dbConnect()
     try {
         const { data } = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET)
 
