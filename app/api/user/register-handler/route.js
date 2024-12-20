@@ -43,7 +43,7 @@ export async function POST(request) {
     try {
 
         const userData = await User.find({ email })
-        console.log(userData)
+        
         if (userData[0] && userData[0].isVerified) {
             return NextResponse.json(
                 { message: 'User is already Created' },
@@ -66,7 +66,6 @@ export async function POST(request) {
             email: email,
             password: HashPassword,
             isVerified: false,
-            isActive: false
         })
 
         async function SendGmail() {
@@ -83,7 +82,7 @@ export async function POST(request) {
             });
             // Email options
             const mailOptions = {
-                from: process.env.NEXT_PUBLIC_GMAIL_USER,
+                from: process.env.GMAIL_USER,
                 to: email,
                 subject: "Your Verification Link",
                 html: `
