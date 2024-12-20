@@ -10,9 +10,9 @@ const PostSchema = new mongoose.Schema(
             type: String,
             required: [true, "Link is required to Shorten"],
             match: [
-                /^(https?|htto):\/\/([\w-]+(\.[\w-]+)+)(\/[\w-]+)*\/?$/,
-                "Please provide a valid URL",
-            ],            
+                /^(https?:\/\/)/,
+                "Please provide a valid URL.",
+              ],    
         },
         ORcode: {
             type: String,
