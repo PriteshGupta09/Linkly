@@ -23,6 +23,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4072792689868937"
+     crossorigin="anonymous"></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0B101B]`}
       >
