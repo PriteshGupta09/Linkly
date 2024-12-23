@@ -18,6 +18,9 @@ export async function POST(request) {
 
         const Link = post.OriginalLink
 
+        post.clicks += 1
+        await post.save()
+
         return NextResponse.json({ message: Link}, { status: 200 });
     } catch (error) {
         console.error('Error while processing request:', error);

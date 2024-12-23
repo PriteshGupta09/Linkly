@@ -10,6 +10,7 @@ const Register = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confPass, setConfPass] = useState('')
+    const [showPass, setShowPass] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -57,22 +58,22 @@ const Register = () => {
             </div>
             <form onSubmit={(e) => { handleSubmit(e) }} className="max-w-sm mx-auto w-96 bg-[#181E29] border-black p-10 rounded-lg shadow-2xl">
                 <div className="mb-5">
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                    <input onChange={(e) => { setEmail(e.target.value) }} value={email} type="email" id="email" className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" required />
+                    <label htmlFor="email" className="block mb-2 text-sm font-medium  text-white">Your email</label>
+                    <input onChange={(e) => { setEmail(e.target.value) }} value={email} type="email" id="email" className=" border outline-none  text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" placeholder="name@example.com" required />
                 </div>
                 <div className="mb-5">
-                    <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
-                    <input onChange={(e) => { setPassword(e.target.value) }} value={password} type="password" id="password" className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                    <label htmlFor="password" className="block mb-2 text-sm font-medium text-white">Your password</label>
+                    <input onChange={(e) => { setPassword(e.target.value) }} value={password} type={showPass? 'text': 'password'} id="password" className=" border outline-none text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required />
                 </div>
                 <div className="mb-5">
-                    <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                    <input onChange={(e) => { setConfPass(e.target.value) }} value={confPass} type="password" id="confirm_password" className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                    <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium  text-white">Confirm password</label>
+                    <input onChange={(e) => { setConfPass(e.target.value) }} value={confPass} type={showPass? 'text': 'password'} id="confirm_password" className=" border outline-none text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required />
                 </div>
                 <div className="flex items-start mb-5">
                     <div className="flex items-center h-5">
-                        <input id="remember" type="checkbox" value="" className="outline-none w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"  />
+                        <input id="remember" onClick={()=>{setShowPass(!showPass)}} type="checkbox" value="" className="outline-none w-4 h-4 border rounded focus:ring-3 bg-gray-700 border-gray-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800"  />
                     </div>
-                    <label htmlFor="remember" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Show Password</label>
+                    <label htmlFor="remember" className="ms-2 text-sm font-medium text-gray-300">Show Password</label>
                 </div>
                 <Button text='Submit' />
             </form>

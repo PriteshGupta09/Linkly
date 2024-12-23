@@ -16,19 +16,33 @@ export async function POST(request) {
     await dbConnect()
 
     try {
-        const PostData = await Post.create({
-            ShortLink: ShortLink,
-            OriginalLink: OriginalLink,
-            ORcode: ORCode,
-            clicks: clicks,
-        })
-
         const { data } = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET)
 
         const email = data.email
 
         const UserData = await User.find({ email: email })
         .select('-password')
+        .populate('data')
+
+        const UserDataArray = UserData[0].data.find((originalLink)=> originalLink.OriginalLink == OriginalLink)
+
+        if(UserDataArray){
+            return NextResponse.json({message: 'Already a ShortLink is Generated for this Link.'}, {status: 400})
+        }
+
+        const post = await Post.findOne({ShortLink})
+
+        if(post){
+            return NextResponse.json({message: 'Already a ShortLink is Generated, Try Another one'}, {status: 400})
+        }
+
+
+        const PostData = await Post.create({
+            ShortLink: ShortLink,
+            OriginalLink: OriginalLink,
+            ORcode: ORCode,
+            clicks: clicks,
+        })
 
         const ID = UserData[0]._id
 

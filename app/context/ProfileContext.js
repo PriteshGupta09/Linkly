@@ -1,11 +1,13 @@
 "use client"; 
 
 import { createContext, useState, useEffect } from "react";
+import WebsiteStatingPage from "@/components/layout/WebsiteStatingPage";
 
 const ProfileContext = createContext();
 
 export const ProfileProvider = ({ children }) => {
     const [profile, setProfile] = useState(null);
+    const [showLandingPage, setshowLandingPage] = useState(true)
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -18,8 +20,10 @@ export const ProfileProvider = ({ children }) => {
     
                 if (response.ok) {
                     setProfile(data.message);
+                    setshowLandingPage(false)
                 } else {
                     console.log(`Error: ${data.message}`)
+                    setshowLandingPage(false)
                 }
             } catch (error) {
                 console.error("An error occurred:", error);
@@ -49,7 +53,8 @@ export const ProfileProvider = ({ children }) => {
 
     return (
         <ProfileContext.Provider value={{ profile, updateProfile }}>
-            {children}
+        {showLandingPage ? <WebsiteStatingPage /> :(children)}
+            
         </ProfileContext.Provider>
     );
 };

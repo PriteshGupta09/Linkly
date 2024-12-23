@@ -1,32 +1,41 @@
-'use client'
-import React from 'react'
-import Button from '../common/Button'
-import { useState } from 'react'
-import { useContext } from 'react'
-import ProfileContext from '@/app/context/ProfileContext'
+'use client';
+
+import React, { useState, useContext } from 'react';
+import Button from '../common/Button';
+import ProfileContext from '@/app/context/ProfileContext';
 import QRCode from "qrcode";
-import { encryptData } from "@/utils/encryptions";
-import ToastMessage from '../layout/ToastError'
-import ToastSucess from '../layout/ToastSucess'
+import ToastMessage from '../layout/ToastError';
+import ToastSucess from '../layout/ToastSucess';
+import LinkSign from '../LinkInput/LinkSign'
+import CustomiseLink from '../LinkInput/CustomiseLink';
 
 const LinkData = () => {
-  const { profile } = useContext(ProfileContext)
-  const { updateProfile } = useContext(ProfileContext);
+  const { profile, updateProfile } = useContext(ProfileContext);
+  const [showMakeOwnLinkbtn, setShowMakeOwnLinkbtn] = useState(false);
+  const [OriginalLink, setOriginalLink] = useState('');
 
-  const [OriginalLink, setOriginalLink] = useState('')
+  function handleInputChange(e) {
+    const value = e.target.value.trim();
+    setOriginalLink(value);
+
+    if (value && value.startsWith('https://')) {
+      setShowMakeOwnLinkbtn(true);
+    } else {
+      setShowMakeOwnLinkbtn(false);
+    }
+  }
 
   const generateQRCode = async (ShortLink) => {
     try {
       if (ShortLink.trim()) {
-        const url = await QRCode.toDataURL(ShortLink);
-        return url
-      } else {
-        ToastMessage('Provide a valid URL')
+        return await QRCode.toDataURL(ShortLink);
       }
+      ToastMessage('Provide a valid URL');
     } catch (error) {
-      return error
+      console.error('QR Code generation error:', error);
+      ToastMessage('Failed to generate QR Code.');
     }
-  }
+  };
 
   const SendDatatoDB = async (LinkData) => {
     try {
@@ -41,78 +50,74 @@ const LinkData = () => {
       const data = await response.json();
 
       if (response.ok) {
-        ToastSucess(data.message)
-        updateProfile()
+        ToastSucess(data.message);
+        updateProfile();
       } else {
-        ToastMessage(data.message)
+        ToastMessage(data.message);
       }
     } catch (error) {
-      ToastMessage('An error while submitting form.')
+      console.error('Submission error:', error);
+      ToastMessage('An error occurred while submitting the form.');
     }
-  }
+  };
 
   const handleSave = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const TrimLink = OriginalLink.trim()
-
-
-    if (!TrimLink.includes('https://')) {
-      ToastMessage('Link is invalid.')
-      return
-    }
-
-    if (TrimLink == '') {
-      ToastMessage('Enter the link first.')
-      return
+    if (!OriginalLink.startsWith('https://')) {
+      ToastMessage('Link is invalid.');
+      return;
     }
 
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const length = 5;
-    let shortURL = "";
-    let ShortLink;
+    const shortURL = Array.from({ length: 5 }, () =>
+      characters.charAt(Math.floor(Math.random() * characters.length))
+    ).join('');
+    const ShortLink = `${process.env.NEXT_PUBLIC_HOST}/${shortURL}`;
 
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      shortURL += characters[randomIndex];
-    }
-    ShortLink = `${process.env.NEXT_PUBLIC_HOST}/${shortURL}`
-
-
-    const ORCode = await generateQRCode(ShortLink)
+    const QRCodeImage = await generateQRCode(ShortLink);
 
     const LinkData = {
-      OriginalLink: TrimLink,
-      ShortLink: ShortLink,
-      ORCode: ORCode,
+      OriginalLink,
+      ShortLink,
+      ORCode: QRCodeImage,
       clicks: 0,
-    }
-
-
-    if (profile) {
-      SendDatatoDB(LinkData)
-      return
     };
 
-    ToastMessage('You have to create Account to create links.')
-    // encryptData(LinkData)
-  }
-
+    if (profile) {
+      await SendDatatoDB(LinkData);
+    } else {
+      ToastMessage('You have to create an account to create links.');
+    }
+  };
 
   return (
     <>
       <ToastMessage />
       <ToastSucess />
-      <div className='flex justify-center'>
-        <form className='relative' onSubmit={(e) => { handleSave(e) }}>
-          <input onChange={(e) => { setOriginalLink(e.target.value) }} value={OriginalLink} type='text' className='px-16 py-4 w-[50vw] rounded-full outline-none  bg-[#181E29]' name='link' placeholder='Enter the link here' />
-          <div className='absolute top-[6px] right-0'>
+      <div className="flex justify-center">
+        <form className="relative" onSubmit={handleSave}>
+          <div className="absolute top-5 left-5">
+            <LinkSign />
+          </div>
+          <input
+            type="text"
+            className="px-16 py-4 w-[50vw] rounded-full outline-none bg-[#181E29]"
+            name="link"
+            placeholder="Enter the link here"
+            value={OriginalLink}
+            onChange={handleInputChange}
+          />
+          <div className="absolute top-[6px] right-0">
             <Button text="Shorten Now!" />
           </div>
+          {(showMakeOwnLinkbtn && profile) && (
+            <CustomiseLink OriginalLink={OriginalLink}/>
+          )}
         </form>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default LinkData
+export default LinkData;

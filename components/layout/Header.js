@@ -25,7 +25,7 @@ const Header = () => {
     return (
         <>
             <nav className='p-5'>
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-between w-[96vw]'>
                     <div>
                         <h1 className='word font-bold text-xl text-white'>Linkly</h1>
                     </div>
