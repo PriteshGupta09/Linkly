@@ -1,43 +1,26 @@
 import CryptoJS from "crypto-js";
-import { localstorage } from '@/utils/localstorage';
-import TableCompo from "@/components/layout/TableCompo";
 
-const ENCRYPT_SECRET_KEY = process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY;
+ export const saveDataToLocalStorage = (data) => {
+  const storageKey = "encryptedLinks";
 
-export const encryptData = (data) => {
-  const dateObj = new Date();
-  const month = dateObj.getUTCMonth() + 1;
-  const day = dateObj.getUTCDate();
-  const year = dateObj.getUTCFullYear();
+  // Retrieve existing data from localStorage
+  const encryptedData = localStorage.getItem(storageKey);
+  let links = encryptedData
+    ? JSON.parse(CryptoJS.AES.decrypt(encryptedData, process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY).toString(CryptoJS.enc.Utf8))
+    : [];
 
-  const newDate = `${day}-${month}-${year}`;
-
-  data.date = newDate
-
-  const stringifiedData = JSON.stringify(data);
-  const EncryptData = CryptoJS.AES.encrypt(stringifiedData, ENCRYPT_SECRET_KEY).toString();
-  localstorage(EncryptData)
-};
-
-export const decryptData = (encryptedValue) => {
-
-  const bytes = CryptoJS.AES.decrypt(encryptedValue, ENCRYPT_SECRET_KEY);
-  console.log(bytes)
-  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-};
-
-
-// Retrieve and decrypt all stored data
-export const getAllDecryptedData = () => {
-  const decryptedData = [];
-  
-  // Loop through keys in localStorage
-  for (let i = 0; i <= localStorage.length; i++) {
-    const key = localStorage.key(i);
-    console.log(key)
-      const data = decryptData(key);
-      decryptedData.push(data);
+  // Check if the limit is reached
+  if (links.length >= 5) {
+    console.warn("Limit reached. Cannot store more data.");
+    return;
   }
 
-  return decryptedData;
+  // Add new data
+  links.push(data);
+
+  // Encrypt the data and store it
+  const encryptedLinks = CryptoJS.AES.encrypt(JSON.stringify(links), process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY).toString();
+  localStorage.setItem(storageKey, encryptedLinks);
 };
+
+

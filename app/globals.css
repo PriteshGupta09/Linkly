@@ -26,6 +26,27 @@
   border-radius: 10px;
   border: 1px;
 }
+.hover-effect{
+  cursor: pointer;
+}
+.line{
+  width: 100%;
+}
+.hover-effect:hover .line{
+  background: linear-gradient(to right,#144EE3, #EB568E, #A353AA, #144EE3);
+  animation: completeLineEffect 2s;
+
+}
+
+@keyframes completeLineEffect{
+  0%{
+    width: 0%;
+  }
+  100%{
+    width: 100%;
+  }
+
+}
 
 /* From Uiverse.io by ZacharyCrespin */ 
 @keyframes square-animation {

@@ -3,9 +3,12 @@ import React, {useState} from 'react'
 import Link from 'next/link'
 import TableCompo from './TableCompo'
 import LinkData from '../main/LinkData'
+import { fetchDataFromLocalStorage } from './TableCompo'
 
 const Main = () => {
+    const data = fetchDataFromLocalStorage()
     const [paste, setPaste] = useState(false)
+    
     return (
         <div className='text-white pt-40 px-20 flex justify-center'>
             <div>
@@ -26,7 +29,7 @@ const Main = () => {
                     </div> 
                 </div>
                 <div className='my-4'>
-                    <p className='text-center'>You can create <span className='text-pink-500'>05</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>
+                    <p className='text-center'>You can create <span className='text-pink-500'>{5 - data.length}</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>
                 </div>
                 <div className='w-[85vw]'>
                     <TableCompo />

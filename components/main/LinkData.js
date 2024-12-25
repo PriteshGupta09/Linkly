@@ -8,8 +8,11 @@ import ToastMessage from '../layout/ToastError';
 import ToastSucess from '../layout/ToastSucess';
 import LinkSign from '../LinkInput/LinkSign'
 import CustomiseLink from '../LinkInput/CustomiseLink';
+import { saveDataToLocalStorage } from '@/utils/encryptions';
+import { fetchDataFromLocalStorage } from '../layout/TableCompo';
 
 const LinkData = () => {
+  const data = fetchDataFromLocalStorage()
   const { profile, updateProfile } = useContext(ProfileContext);
   const [showMakeOwnLinkbtn, setShowMakeOwnLinkbtn] = useState(false);
   const [OriginalLink, setOriginalLink] = useState('');
@@ -87,7 +90,21 @@ const LinkData = () => {
     if (profile) {
       await SendDatatoDB(LinkData);
     } else {
-      ToastMessage('You have to create an account to create links.');
+      const repeatOiginalLink = data.find((posts) => posts.OriginalLink == LinkData.OriginalLink)
+
+      if(repeatOiginalLink){
+        alert('The Link is already used')
+        return
+      }
+
+      const repeatShortLink = data.find((posts)=> posts.ShortLink == LinkData.ShortLink)
+
+      if(repeatShortLink){
+        alert('ShortLink is alraedy generated for this Link')
+        return
+      }
+
+      saveDataToLocalStorage(LinkData)
     }
   };
 
