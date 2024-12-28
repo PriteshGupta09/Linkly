@@ -3,12 +3,28 @@ import React from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect} from 'react'
 import ToastMessage from '@/components/layout/ToastError'
+import { fetchDataFromLocalStorage } from '@/components/layout/TableCompo'
+import { updateCount } from '@/components/layout/TableCompo'
 
 const Page = () => {
     const router = useRouter()
     const ShortLink = useParams().shortLink
-
+    
     useEffect(() => {
+
+      const data =  fetchDataFromLocalStorage()
+
+      const URL = `${process.env.NEXT_PUBLIC_HOST}/${ShortLink}`
+      console.log(URL)
+      const isShortLink = data.find((posts)=>posts.ShortLink == URL)
+      const OriginalLink = isShortLink?.OriginalLink
+      if(isShortLink){
+        updateCount(URL)
+        router.replace(OriginalLink)
+        return
+      }
+
+
         async function SendDataToPost() {
                 try {
                   const response = await fetch("/api/link/shortlink", {
@@ -31,7 +47,7 @@ const Page = () => {
                 }
         }
         SendDataToPost()
-    }, [])
+    }, [ShortLink])
     
 
   return (<>

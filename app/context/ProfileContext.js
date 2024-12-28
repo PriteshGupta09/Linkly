@@ -45,10 +45,10 @@ export const ProfileProvider = ({ children }) => {
           if (response.ok) {
             setProfile(data.message); // Update the profile state
           } else {
-            console.error(`Error updating profile: ${data.message}`);
+            console.log(`Error updating profile: ${data.message}`);
           }
         } catch (error) {
-          console.error("An error occurred while updating profile:", error);
+          console.log("An error occurred while updating profile:", error);
         }
       };
 

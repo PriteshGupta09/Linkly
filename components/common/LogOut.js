@@ -18,16 +18,16 @@ const LogOut = () => {
             const data = await response.json();
 
             if (response.ok) {
+                ToastSucess(data.message)
                 setTimeout(()=>{
                     updateProfile()
                     Router.replace('/login')
                 },2000)
-                ToastSucess(data.message)
             } else {
                 ToastMessage(data.message)
             }
         } catch (error) {
-            ToastMessage('An error while submitting form.')
+            ToastMessage('An error while Logout')
         }
     }
 

@@ -43,7 +43,8 @@ const saveDataToLocalStorage = (data) => {
 };
 
 // Update the click count
-const updateCount = (shortLink) => {
+export const updateCount = (shortLink) => {
+  console.log(shortLink)
   let links = fetchDataFromLocalStorage();
   links = links.map((link) =>
     link.ShortLink === shortLink ? { ...link, clicks: link.clicks + 1 } : link
