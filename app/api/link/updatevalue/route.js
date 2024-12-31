@@ -4,7 +4,7 @@ import Post from "@/model/Post";
 
 export async function POST(req) {
     try {
-        const ShortLink = await req.json();
+        const {ShortLink} = await req.json();
         await dbConnect();
 
         const post = await Post.findOne({ ShortLink });

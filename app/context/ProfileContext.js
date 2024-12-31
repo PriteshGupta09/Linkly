@@ -8,7 +8,6 @@ const ProfileContext = createContext();
 export const ProfileProvider = ({ children }) => {
     const [profile, setProfile] = useState(null);
     const [showLandingPage, setshowLandingPage] = useState(true)
-    const [links, setLinks] = useState([]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -52,12 +51,10 @@ export const ProfileProvider = ({ children }) => {
         }
       };
 
-      const updateLinks = (newLinks) => {
-        setLinks(newLinks);
-      };
+
 
     return (
-        <ProfileContext.Provider value={{ profile, updateProfile, links, updateLinks }}>
+        <ProfileContext.Provider value={{ profile, updateProfile }}>
         {showLandingPage ? <WebsiteStatingPage /> :(children)}
             
         </ProfileContext.Provider>

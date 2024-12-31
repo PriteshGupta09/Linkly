@@ -4,7 +4,7 @@ import Post from '@/model/Post';
 
 export async function POST(request) {
 
-    const ShortLink = await request.json();
+    const {ShortLink} = await request.json();
     const FinalLink = `${process.env.NEXT_PUBLIC_HOST}/${ShortLink}`
 
     await dbConnect();

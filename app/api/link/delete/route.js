@@ -8,8 +8,8 @@ export async function POST(request) {
     const token = request.cookies.get('token')?.value;
 
     // Parse the ShortLink from the request body
-    const ShortLink = await request.json();
-
+    const {ShortLink} = await request.json();
+    
     await dbConnect();
     try {
         // Verify the JWT token and extract user email
@@ -24,9 +24,10 @@ export async function POST(request) {
         if (!user) {
             return NextResponse.json({ message: 'Their is an Problem You need to login again' }, { status: 400 });
         }
-
+        
         // Find the Post object with the matching ShortLink in the user's data array
-        const postToRemove = user.data.find((post) => post.ShortLink === ShortLink);
+        const postToRemove = user.data.find((post) => post.ShortLink == ShortLink);
+        
 
         if (!postToRemove) {
             return NextResponse.json({ message: 'Link is not found.' }, { status: 400 });

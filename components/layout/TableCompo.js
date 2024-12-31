@@ -1,73 +1,19 @@
 "use client";
-
 import React, { useEffect, useState, useContext } from "react";
 import Edit from "./Edit";
 import Image from "next/image";
 import ProfileContext from "@/app/context/ProfileContext";
 import ToastMessage from "./ToastError";
 import ToastSucess from "./ToastSucess";
-import CryptoJS from "crypto-js";
+import { fetchDataFromLocalStorage } from "@/utils/localstorage-oper";
+import { deleteLink } from "@/utils/localstorage-oper";
+import { updateCount } from "@/utils/localstorage-oper";
 
-const storageKey = "encryptedLinks";
-
-// Fetch and decrypt data from localStorage
-export const fetchDataFromLocalStorage = () => {
-  try {
-    const encryptedData = localStorage.getItem(storageKey);
-    if (!encryptedData) return [];
-    const decryptedData = CryptoJS.AES.decrypt(
-      encryptedData,
-      process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY
-    ).toString(CryptoJS.enc.Utf8);
-    return JSON.parse(decryptedData);
-  } catch (error) {
-    console.error("Failed to fetch or decrypt data:", error);
-    return [];
-  }
-};
-
-// Save and encrypt data to localStorage
-const saveDataToLocalStorage = (data) => {
-  try {
-    const encryptedData = CryptoJS.AES.encrypt(
-      JSON.stringify(data),
-      process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY
-    ).toString();
-    localStorage.setItem(storageKey, encryptedData);
-
-    // Trigger storage event
-    window.dispatchEvent(new Event("storage"));
-  } catch (error) {
-    console.error("Failed to save or encrypt data:", error);
-  }
-};
-
-// Update the click count
-export const updateCount = (shortLink) => {
-  console.log(shortLink)
-  let links = fetchDataFromLocalStorage();
-  links = links.map((link) =>
-    link.ShortLink === shortLink ? { ...link, clicks: link.clicks + 1 } : link
-  );
-  saveDataToLocalStorage(links);
-  return true
-};
-
-// Delete a link from localStorage
-const deleteLink = (shortLink) => {
-  let links = fetchDataFromLocalStorage();
-  links = links.filter((link) => link.ShortLink !== shortLink);
-  saveDataToLocalStorage(links);
-  return true
-};
-
-const TableCompo = () => {
+const TableCompo = ({loadDatafromLocal}) => {
 
   const [links, setLinks] = useState([]);
   const [linksLocal, setLinksLocal] = useState(fetchDataFromLocalStorage());
-  const { profile } = useContext(ProfileContext);
-  const { updateProfile, link } = useContext(ProfileContext);
-
+  const { profile, updateProfile } = useContext(ProfileContext);
   // Populate `links` from profile data
   useEffect(() => {
     if (profile?.data) {
@@ -88,9 +34,15 @@ const TableCompo = () => {
     };
   }, []);
 
-  const handleDeleteLink = async (shortLink) => {
+  useEffect(() => {
+    const data = fetchDataFromLocalStorage()
+    setLinksLocal(data)
 
-   const deletefromlocal = deleteLink(shortLink);
+  }, [loadDatafromLocal])
+
+  const handleDeleteLink = async (ShortLink) => {
+
+   const deletefromlocal = deleteLink(ShortLink);
    if(deletefromlocal){
      setLinksLocal(fetchDataFromLocalStorage());
       alert('Delete Successfully')
@@ -101,7 +53,7 @@ const TableCompo = () => {
       const response = await fetch("/api/link/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shortLink }),
+        body: JSON.stringify({ ShortLink }),
       });
 
       const data = await response.json();
@@ -117,8 +69,8 @@ const TableCompo = () => {
     }
   };
 
-  const handleUpdateCount = async (shortLink) => {
-   const updatefromlocal = updateCount(shortLink);
+  const handleUpdateCount = async (ShortLink) => {
+   const updatefromlocal = updateCount(ShortLink);
    if(updatefromlocal){
      setLinksLocal(fetchDataFromLocalStorage());
      return
@@ -128,7 +80,7 @@ const TableCompo = () => {
       const response = await fetch("/api/link/updatevalue", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shortLink }),
+        body: JSON.stringify({ ShortLink }),
       });
 
       const data = await response.json();
@@ -174,7 +126,7 @@ const TableCompo = () => {
                 </th>
                 <td className="px-6 py-4 truncate-multiline w-96">{link.OriginalLink}</td>
                 <td className="px-6 py-4 text-center">
-                  <Image src={link.ORCode} height={75} width={75} alt="QR Code" />
+                  <Image src={link.ORcode || link.ORCode} height={75} width={75} alt="QR Code" />
                 </td>
                 <td className="px-6 py-4 text-center">{link.clicks}</td>
                 <td className="px-6 py-4 text-center">

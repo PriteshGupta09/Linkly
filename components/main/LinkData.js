@@ -8,14 +8,15 @@ import ToastMessage from '../layout/ToastError';
 import ToastSucess from '../layout/ToastSucess';
 import LinkSign from '../LinkInput/LinkSign'
 import CustomiseLink from '../LinkInput/CustomiseLink';
-import { saveDataToLocalStorage } from '@/utils/encryptions';
-import { fetchDataFromLocalStorage } from '../layout/TableCompo';
+import { saveDataToLocalStorageFirst } from '@/utils/localstorage-oper';
+import { fetchDataFromLocalStorage } from '@/utils/localstorage-oper';
 
-const LinkData = () => {
+const LinkData = ({DataFromLinkCompo}) => {
   const data = fetchDataFromLocalStorage()
   const { profile, updateProfile } = useContext(ProfileContext);
   const [showMakeOwnLinkbtn, setShowMakeOwnLinkbtn] = useState(false);
   const [OriginalLink, setOriginalLink] = useState('');
+
 
   function handleInputChange(e) {
     const value = e.target.value.trim();
@@ -80,11 +81,19 @@ const LinkData = () => {
 
     const QRCodeImage = await generateQRCode(ShortLink);
 
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const TodayDate = `${year}-${month}-${day}`;
+
     const LinkData = {
       OriginalLink,
       ShortLink,
       ORCode: QRCodeImage,
       clicks: 0,
+      Date: TodayDate,
     };
 
     if (profile) {
@@ -92,19 +101,20 @@ const LinkData = () => {
     } else {
       const repeatOiginalLink = data.find((posts) => posts.OriginalLink == LinkData.OriginalLink)
 
-      if(repeatOiginalLink){
+      if (repeatOiginalLink) {
         alert('The Link is already used')
         return
       }
 
-      const repeatShortLink = data.find((posts)=> posts.ShortLink == LinkData.ShortLink)
+      const repeatShortLink = data.find((posts) => posts.ShortLink == LinkData.ShortLink)
 
-      if(repeatShortLink){
+      if (repeatShortLink) {
         alert('ShortLink is alraedy generated for this Link')
         return
       }
 
-      saveDataToLocalStorage(LinkData)
+      saveDataToLocalStorageFirst(LinkData)
+      DataFromLinkCompo(true)
     }
   };
 
@@ -129,7 +139,7 @@ const LinkData = () => {
             <Button text="Shorten Now!" />
           </div>
           {(showMakeOwnLinkbtn && profile) && (
-            <CustomiseLink OriginalLink={OriginalLink}/>
+            <CustomiseLink OriginalLink={OriginalLink} />
           )}
         </form>
       </div>

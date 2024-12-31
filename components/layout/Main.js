@@ -1,13 +1,29 @@
 'use client'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Link from 'next/link'
 import TableCompo from './TableCompo'
 import LinkData from '../main/LinkData'
-import { fetchDataFromLocalStorage } from './TableCompo'
+import { fetchDataFromLocalStorage } from '@/utils/localstorage-oper'
 
 const Main = () => {
     const data = fetchDataFromLocalStorage()
     const [paste, setPaste] = useState(false)
+    const [loadDatafromLocal, setLoadDatafromLocal] = useState()
+    const [datafromls, setDatafromls] = useState('')
+
+    function DataFromLinkCompo(click) {
+        setLoadDatafromLocal(click)
+        setTimeout(() => {
+            setLoadDatafromLocal(false)
+        }, 1000);
+    }
+
+    useEffect(() => {
+        const data = fetchDataFromLocalStorage()
+        setDatafromls(data)
+
+    }, [loadDatafromLocal])
+    
     
     return (
         <div className='text-white pt-40 px-20 flex justify-center'>
@@ -18,7 +34,7 @@ const Main = () => {
                 <div className='my-4 w-[56%] mx-auto'>
                     <p className='text-center'>Linkly is an efficient and easy-to-use URL shortening service that streamlines your online appearance</p>
                 </div>
-                <LinkData />
+                <LinkData DataFromLinkCompo={DataFromLinkCompo} />
                 <div className='my-4 mx-auto w-[56%] flex items-center justify-center'>
                     <div className='flex items-center gap-3'>
                         <label className="inline-flex items-center cursor-pointer">
@@ -29,10 +45,10 @@ const Main = () => {
                     </div> 
                 </div>
                 <div className='my-4'>
-                    <p className='text-center'>You can create <span className='text-pink-500'>{5 - data.length}</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>
+                    <p className='text-center'>You can create <span className='text-pink-500'>{5 - datafromls.length}</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>
                 </div>
                 <div className='w-[85vw]'>
-                    <TableCompo />
+                    <TableCompo loadDatafromLocal={loadDatafromLocal} />
                 </div>
             </div>
         </div>

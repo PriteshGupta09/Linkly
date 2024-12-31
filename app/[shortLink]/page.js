@@ -1,14 +1,16 @@
 'use client'
-import React from 'react'
+import React, {useContext} from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect} from 'react'
 import ToastMessage from '@/components/layout/ToastError'
-import { fetchDataFromLocalStorage } from '@/components/layout/TableCompo'
-import { updateCount } from '@/components/layout/TableCompo'
+import { fetchDataFromLocalStorage } from '@/utils/localstorage-oper'
+import { updateCount } from '@/utils/localstorage-oper'
+import ProfileContext from '../context/ProfileContext'
 
 const Page = () => {
     const router = useRouter()
     const ShortLink = useParams().shortLink
+    const {updateProfile} = useContext(ProfileContext)
     
     useEffect(() => {
 
@@ -24,7 +26,6 @@ const Page = () => {
         return
       }
 
-
         async function SendDataToPost() {
                 try {
                   const response = await fetch("/api/link/shortlink", {
@@ -32,12 +33,13 @@ const Page = () => {
                     headers: {
                       "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(ShortLink),
+                    body: JSON.stringify({ShortLink}),
                   });
             
                   const data = await response.json();
             
                   if (response.ok) {
+                    updateProfile()
                     router.replace(data.message)
                   } else {
                     ToastMessage(data.message)
@@ -47,7 +49,7 @@ const Page = () => {
                 }
         }
         SendDataToPost()
-    }, [ShortLink])
+    }, [])
     
 
   return (<>
