@@ -13,12 +13,15 @@ import Email from './Email'
 import ToastMessage from '../layout/ToastError'
 import ToastSucess from '../layout/ToastSucess'
 
-const ForgotPassword = () => {
+const ForgotPassword = ({loading}) => {
     const [email, setEmail] = useState('')
 
     async function HandleEmail() {
+        loading(true)
         if(!email){
-            alert('Enter Your Email.')
+            ToastMessage('Enter Your Email.')
+            loading(false)
+            return
         }
 
         try {
@@ -34,11 +37,14 @@ const ForgotPassword = () => {
 
             if (response.ok) {
                 ToastSucess(data.message)
+                loading(false)
             } else {
                 ToastMessage(data.message)
+                loading(false)
             }
         } catch (error) {
-            ToastMessage('An Error While Submitting Form.')
+            loading(false)
+            ToastMessage('Internal Server Error, Try again later.')
         }
     }
 

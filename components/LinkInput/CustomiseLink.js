@@ -15,7 +15,8 @@ import ToastSucess from '../layout/ToastSucess'
 import ToastMessage from '../layout/ToastError'
 import ProfileContext from '@/app/context/ProfileContext'
 
-const CustomiseLink = ({OriginalLink}) => {
+const CustomiseLink = (data) => {
+    const {OriginalLink, loader} =  data
     const [CustomLink, setCustomLink] = useState('')
     const {updateProfile} = useContext(ProfileContext)
 
@@ -33,9 +34,12 @@ const CustomiseLink = ({OriginalLink}) => {
 
 
     async function HandleCustomizeLink() {
+        loader(true)
         const FinalCustomLink = CustomLink.trim()
         if (!FinalCustomLink) {
-            alert('You have to Enter the Value')
+            ToastMessage('Enter the Value of ShortLink.')
+            loader(false)
+            return
         }
 
         const Link = `${process.env.NEXT_PUBLIC_HOST}/${FinalCustomLink}`
@@ -61,14 +65,17 @@ const CustomiseLink = ({OriginalLink}) => {
             const data = await response.json();
 
             if (response.ok) {
+                loader(false)
                 ToastSucess(data.message);
                 updateProfile();
             } else {
+                loader(false)
                 ToastMessage(data.message);
             }
         } catch (error) {
+            loader(false)
             console.error('Submission error:', error);
-            ToastMessage('An error occurred while submitting the form.');
+            ToastMessage('Internal Server Error, Try again later.');
         }
     }
 

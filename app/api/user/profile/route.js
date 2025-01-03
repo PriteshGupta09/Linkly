@@ -8,7 +8,7 @@ export async function POST(request) {
     const token = request.cookies.get('token')?.value
 
     if (!token) {
-        return NextResponse.json({ message: 'Please Register or Login into Your Account for make Unlimited Short Links' },
+        return NextResponse.json({ message: 'Register or Login into your account. ' },
             { status: 400 })
     }
    await dbConnect()
@@ -23,7 +23,7 @@ export async function POST(request) {
 
 
         if (!UserData[0]) {
-            return NextResponse.json({ message: 'Invalid User. Please Login in Your Account Again.' },
+            return NextResponse.json({ message: 'Unauthorised user.' },
                 { status: 400 })
         }
         return NextResponse.json({ message: UserData[0] },
@@ -31,7 +31,7 @@ export async function POST(request) {
 
     } catch (error) {
         console.error('Error processing POST request:', error);
-        return NextResponse.json({ message: 'An error occurred while processing the request' },
+        return NextResponse.json({ message: 'Unauthorised User.' },
             { status: 500 })
     }
 }

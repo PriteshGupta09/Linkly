@@ -11,8 +11,11 @@ import CustomiseLink from '../LinkInput/CustomiseLink';
 import { saveDataToLocalStorageFirst } from '@/utils/localstorage-oper';
 import { fetchDataFromLocalStorage } from '@/utils/localstorage-oper';
 
-const LinkData = ({DataFromLinkCompo}) => {
+const LinkData = (loading) => {
+  const {DataFromLinkCompo, loader, overflowhide} = loading
+
   const data = fetchDataFromLocalStorage()
+  
   const { profile, updateProfile } = useContext(ProfileContext);
   const [showMakeOwnLinkbtn, setShowMakeOwnLinkbtn] = useState(false);
   const [OriginalLink, setOriginalLink] = useState('');
@@ -37,7 +40,7 @@ const LinkData = ({DataFromLinkCompo}) => {
       ToastMessage('Provide a valid URL');
     } catch (error) {
       console.error('QR Code generation error:', error);
-      ToastMessage('Failed to generate QR Code.');
+      ToastMessage('Failed to generate QR Code. Try again Later');
     }
   };
 
@@ -54,21 +57,31 @@ const LinkData = ({DataFromLinkCompo}) => {
       const data = await response.json();
 
       if (response.ok) {
+        loader(false)
+        overflowhide(false)
         ToastSucess(data.message);
         updateProfile();
       } else {
+        loader(false)
+        overflowhide(false)
         ToastMessage(data.message);
       }
     } catch (error) {
+      loader(false)
+      overflowhide(false)
       console.error('Submission error:', error);
-      ToastMessage('An error occurred while submitting the form.');
+      ToastMessage('Internal Server Error, Try again later.');
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+    loader(true)
+    overflowhide(true)
 
     if (!OriginalLink.startsWith('https://')) {
+      loader(false)
+      overflowhide(false)
       ToastMessage('Link is invalid.');
       return;
     }
@@ -102,26 +115,42 @@ const LinkData = ({DataFromLinkCompo}) => {
       const repeatOiginalLink = data.find((posts) => posts.OriginalLink == LinkData.OriginalLink)
 
       if (repeatOiginalLink) {
-        alert('The Link is already used')
+        loader(false)
+        overflowhide(false)
+        ToastMessage('Already a ShortLink is avaible for this Link.')
         return
       }
 
       const repeatShortLink = data.find((posts) => posts.ShortLink == LinkData.ShortLink)
 
       if (repeatShortLink) {
-        alert('ShortLink is alraedy generated for this Link')
+        loader(false)
+        overflowhide(false)
+        ToastMessage('Already a ShortLink is Generated, Try Another one')
         return
       }
+      
+      const SaveToLs = saveDataToLocalStorageFirst(LinkData)
 
-      saveDataToLocalStorageFirst(LinkData)
-      DataFromLinkCompo(true)
+      if(SaveToLs.success){
+        DataFromLinkCompo(true)
+        loader(false)
+        overflowhide(false)
+        ToastSucess(SaveToLs.message)
+      }
+      else{
+        DataFromLinkCompo(false)
+        loader(false)
+        overflowhide(false)
+        ToastMessage(SaveToLs.message)
+      }
     }
   };
 
   return (
     <>
-      <ToastMessage />
       <ToastSucess />
+      <ToastMessage />
       <div className="flex justify-center">
         <form className="relative" onSubmit={handleSave}>
           <div className="absolute top-5 left-5">
@@ -129,7 +158,7 @@ const LinkData = ({DataFromLinkCompo}) => {
           </div>
           <input
             type="text"
-            className="px-16 py-4 w-[50vw] rounded-full outline-none bg-[#181E29]"
+            className="px-16 pr-40 py-4 w-[50vw] rounded-full outline-none bg-[#181E29]"
             name="link"
             placeholder="Enter the link here"
             value={OriginalLink}
@@ -139,7 +168,7 @@ const LinkData = ({DataFromLinkCompo}) => {
             <Button text="Shorten Now!" />
           </div>
           {(showMakeOwnLinkbtn && profile) && (
-            <CustomiseLink OriginalLink={OriginalLink} />
+            <CustomiseLink OriginalLink={OriginalLink} loader={loader} />
           )}
         </form>
       </div>

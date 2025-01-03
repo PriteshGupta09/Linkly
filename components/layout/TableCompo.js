@@ -9,17 +9,29 @@ import { fetchDataFromLocalStorage } from "@/utils/localstorage-oper";
 import { deleteLink } from "@/utils/localstorage-oper";
 import { updateCount } from "@/utils/localstorage-oper";
 
-const TableCompo = ({loadDatafromLocal}) => {
+const TableCompo = (data) => {
+
+  const {loadDatafromLocal, loader, overflowhide} = data
 
   const [links, setLinks] = useState([]);
   const [linksLocal, setLinksLocal] = useState(fetchDataFromLocalStorage());
-  const { profile, updateProfile } = useContext(ProfileContext);
+  const { profile, updateProfile, callUpdateProfile} = useContext(ProfileContext);
   // Populate `links` from profile data
   useEffect(() => {
     if (profile?.data) {
       setLinks(profile.data);
     }
+
   }, [profile]);
+
+  useEffect(() => {
+    if (callUpdateProfile) {
+      setLinks([]); // Clear links on logout
+      if (!callUpdateProfile) {
+        updateProfile(); // Fetch new data on login
+      }
+    }
+  }, [callUpdateProfile, updateProfile]);
 
   // Listen for storage changes
   useEffect(() => {
@@ -41,13 +53,16 @@ const TableCompo = ({loadDatafromLocal}) => {
   }, [loadDatafromLocal])
 
   const handleDeleteLink = async (ShortLink) => {
-
-   const deletefromlocal = deleteLink(ShortLink);
-   if(deletefromlocal){
-     setLinksLocal(fetchDataFromLocalStorage());
-      alert('Delete Successfully')
+    loader(true)
+    overflowhide(true)
+    const deletefromlocal = deleteLink(ShortLink);
+    if (deletefromlocal.success) {
+      setLinksLocal(fetchDataFromLocalStorage());
+      loader(false)
+      overflowhide(false)
+      ToastSucess(deletefromlocal.message)
       return
-   }
+    }
 
     try {
       const response = await fetch("/api/link/delete", {
@@ -59,22 +74,28 @@ const TableCompo = ({loadDatafromLocal}) => {
       const data = await response.json();
       if (response.ok) {
         updateProfile();
+        loader(false)
+        overflowhide(false)
         ToastSucess(data.message);
       } else {
+        loader(false)
+        overflowhide(false)
         ToastMessage(data.message);
       }
     } catch (error) {
       console.error("Error deleting link:", error);
-      ToastMessage("An error occurred while deleting the link.");
+      loader(false)
+      overflowhide(false)
+      ToastMessage("Internal Server Error.");
     }
   };
 
   const handleUpdateCount = async (ShortLink) => {
-   const updatefromlocal = updateCount(ShortLink);
-   if(updatefromlocal){
-     setLinksLocal(fetchDataFromLocalStorage());
-     return
-   }
+    const updatefromlocal = updateCount(ShortLink);
+    if (updatefromlocal) {
+      setLinksLocal(fetchDataFromLocalStorage());
+      return
+    }
 
     try {
       const response = await fetch("/api/link/updatevalue", {
@@ -90,13 +111,13 @@ const TableCompo = ({loadDatafromLocal}) => {
         ToastMessage(data.message);
       }
     } catch (error) {
-      console.error("Error updating click count:", error);
       ToastMessage("An error occurred while updating the clicks.");
     }
   };
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+
       <ToastMessage />
       <ToastSucess />
       <table className="w-full text-sm text-left text-gray-400">

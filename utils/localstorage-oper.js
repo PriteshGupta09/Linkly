@@ -29,6 +29,7 @@ export const saveDataToLocalStorage = (data) => {
 
     // Trigger storage event
     window.dispatchEvent(new Event("storage"));
+    return 'Successfully ShortLink Generated'
   } catch (error) {
     console.error("Failed to save or encrypt data:", error);
   }
@@ -60,12 +61,11 @@ export const deleteLink = (shortLink) => {
   }
   links = links.filter((link) => link.ShortLink !== shortLink);
   saveDataToLocalStorage(links);
-  return true
+  return { success: true, message: "Successfully deleted the ShortLink" };
 };
 
 
 export const saveDataToLocalStorageFirst = (data) => {
-    const storageKey = "encryptedLinks";
   
     // Retrieve existing data from localStorage
     const encryptedData = localStorage.getItem(storageKey);
@@ -75,8 +75,7 @@ export const saveDataToLocalStorageFirst = (data) => {
   
     // Check if the limit is reached
     if (links.length >= 5) {
-      console.warn("Limit reached. Cannot store more data.");
-      return;
+      return {success:false , message:'Limit reached. Cannot store more link.'};
     }
   
     // Add new data
@@ -85,5 +84,6 @@ export const saveDataToLocalStorageFirst = (data) => {
     // Encrypt the data and store it
     const encryptedLinks = CryptoJS.AES.encrypt(JSON.stringify(links), process.env.NEXT_PUBLIC_ENCRYPT_SECRET_KEY).toString();
     localStorage.setItem(storageKey, encryptedLinks);
+    return {success:true , message:'Successfully ShortLink Generated'};
   };
   

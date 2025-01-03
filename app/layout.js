@@ -1,6 +1,8 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import 'react-toastify/dist/ReactToastify.css';
 import Cube from "@/components/layout/Cube";
+import { ToastContainer } from 'react-toastify';
 import { ProfileProvider } from "./context/ProfileContext";
 import Header from "@/components/layout/Header";
 
@@ -30,12 +32,23 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
         <link rel="manifest" href="/site.webmanifest" />
-          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4072792689868937"
-            crossorigin="anonymous"></script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0B101B] relative`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0B101B]`}
       >
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable={false}
+          pauseOnHover={false}
+          theme="dark"
+        />
+        
         <div className='absolute -top-16 right-16'>
           <Cube height='300' width='300' />
         </div>

@@ -12,9 +12,6 @@ const WebsiteStatingPage = () => {
                 <div className='text-center text-3xl font-bold mb-4'>
                     <h1>Welcome To <span className='word'>Linkly</span></h1>
                 </div>
-                <div className='w-[75%] text-center mx-auto text-xl'>
-                    <h3>Wait a Movement, We are Setup Things To make Your Experience Smooth.</h3>
-                </div>
                 <div className='my-8 flex justify-center '>
                     <Loader />
                 </div>

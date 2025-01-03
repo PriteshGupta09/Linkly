@@ -12,14 +12,14 @@ export async function POST(request) {
 
     if (email == '' || password == '' || confPass == '') {
         return NextResponse.json(
-            { error: "Enter Values in all Fields." },
+            { error: "Missing value of email or password." },
             { status: 400 }
           );
     }
 
     if (password !== confPass) {
         return NextResponse.json(
-            { error: "Enter same Enter in both fields." },
+            { error: "Enter same Password in both fields." },
             { status: 400 }
           );
     }
@@ -37,16 +37,16 @@ export async function POST(request) {
         );
       }
 
-    const HashPassword = await bcrypt.hash(password, 10)
-
-    await dbConnect()
-    try {
-
+      
+      await dbConnect()
+      try {
+        const HashPassword = await bcrypt.hash(password, 10)
+          
         const userData = await User.find({ email })
         
         if (userData[0] && userData[0].isVerified) {
             return NextResponse.json(
-                { message: 'User is already Created' },
+                { message: 'User is already exist.' },
                 { status: 400 }
             );
         }
@@ -105,7 +105,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error processing POST request:', error);
         return NextResponse.json(
-            { message: 'An error occurred while processing the request' },
+            { message: 'Internal Server Error, Try again later.' },
             { status: 500 }
         );
     }

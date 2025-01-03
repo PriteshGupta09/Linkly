@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import ToastMessage from '@/components/layout/ToastError';
 import NewPass from './NewPass';
+import Loader from '../common/Loader';
 
 const ForgotPasswordContent = () => {
     const searchParams = useSearchParams();
@@ -12,6 +13,7 @@ const ForgotPasswordContent = () => {
 
     const [message, setMessage] = useState('');
     const [error, setError] = useState();
+    const [loader, setLoader] = useState(true)
 
     useEffect(() => {
         const SendToken = async () => {
@@ -28,13 +30,16 @@ const ForgotPasswordContent = () => {
 
                 if (response.ok) {
                     setMessage(data.message);
+                    setLoader(false)
                     setError(false);
                 } else {
                     setMessage(data.message);
+                    setLoader(false)
                     setError(true);
                 }
             } catch (error) {
-                ToastMessage('An error occurred while submitting the form.');
+                setLoader(false)
+                ToastMessage('Internal Server Error.');
             }
         };
 
@@ -43,13 +48,22 @@ const ForgotPasswordContent = () => {
 
     return (
         <>
-            {error ? (<div className="w-full flex-col flex items-center max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 h-80">
+            {loader ? (
+                <div className='relative h-screen w-screen bg-black/40 z-[999]'>
+                    <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                        <Loader />
+                    </div>
+                </div>
+            ) : null}
+            <div className='absolute'>
+            {error ? (
+                <div className="w-96 flex-col flex items-center max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 h-80">
                 <h1 className=' text-2xl font-bold my-4 word'>Linkly</h1>
-                <h3 className='text-xl font-bold my-4 text-white text-center'>Token TimeOut You Have to Re Enter Your Email</h3>
+                <h3 className='text-xl font-bold my-4 text-white text-center'>Link is Expired or Invalid, You have to try again.</h3>
                 <p className='text-red-600 text-xl font-bold my-4'>{message}</p>
                 <div className='my-4'><a href='/login' target='_blank' className='text-blue-600'>Go Back To Login Page</a></div>
-
             </div>) : <NewPass />}
+            </div>
 
         </>
 

@@ -12,7 +12,7 @@ export async function POST(request) {
 
     if (email == '' || password == '') {
         return NextResponse.json(
-            { error: "Enter Values in all Fields." },
+            { error: "Missing Value of Email or Password" },
             { status: 400 }
           );
     }
@@ -24,7 +24,7 @@ export async function POST(request) {
         
         if (!userData[0]) {
             return NextResponse.json(
-                { message: 'User not Found. Firstly Create an Account' },
+                { message: 'User not exist.' },
                 { status: 400 }
             );
         }
@@ -47,9 +47,7 @@ export async function POST(request) {
                 );
         }
 
-        const UpdateUser = await User.findOneAndUpdate({email: email}, {isActive: true})
-
-        const {isVerified, isActive} = userData[0]
+        const {isVerified} = userData[0]
 
         const data = {
             email: email,
@@ -65,7 +63,7 @@ export async function POST(request) {
           const serializedCookie = serialize("token", data_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            maxAge: 30 * 24 * 60 * 60, // 1 month in seconds
+            maxAge: 24 * 60 * 60, // 1 month in seconds
             path: "/",
             SameSite: "Strict",
           });
@@ -81,7 +79,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error processing POST request:', error);
         return NextResponse.json(
-            { message: 'An error occurred while processing the request' },
+            { message: 'Internal Server Error, Try again Later.' },
             { status: 500 }
         );
     }

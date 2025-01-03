@@ -14,7 +14,7 @@ export async function POST(req) {
         const user = await User.findOne({ email: email })
 
         if (!user || !user.isVerified) {
-            return NextResponse.json({ message: 'User not Found or User is not Verified' }, { status: 400 })
+            return NextResponse.json({ message: 'User not exist or User is not Verified' }, { status: 400 })
         }
 
         async function SendGmail() {
@@ -50,7 +50,7 @@ export async function POST(req) {
         return NextResponse.json({ message: 'Email Sent Successfully' }, { status: 200 })
     } catch (error) {
         console.log('Error Message is: ', error)
-        return NextResponse.json({ message: 'Internal Server Error.' }, { status: 500 })
+        return NextResponse.json({ message: 'Internal Server Error, Try again Later.' }, { status: 500 })
     }
 
 }

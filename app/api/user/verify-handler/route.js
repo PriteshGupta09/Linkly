@@ -7,7 +7,7 @@ export async function POST(request) {
     const token  = await request.json()
     if (!token) {
         return NextResponse.json(
-            { message: 'Token Not Found or Token is invalid' },
+            { message: 'Link is invalid or Expired.' },
             { status: 400 }
         );
     }
@@ -19,7 +19,7 @@ export async function POST(request) {
         
         if(!VerifyUser){
             return NextResponse.json(
-                { message: 'User Not Found' },
+                { message: 'User Not exist.' },
                 { status: 400 }
             );
         }
@@ -30,7 +30,7 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error processing POST request:', error);
         return NextResponse.json(
-            { message: 'An error occurred while processing the request' },
+            { message: 'Link is invalid or expired, Try again.' },
             { status: 500 }
         );
     }

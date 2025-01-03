@@ -8,6 +8,7 @@ const ProfileContext = createContext();
 export const ProfileProvider = ({ children }) => {
     const [profile, setProfile] = useState(null);
     const [showLandingPage, setshowLandingPage] = useState(true)
+    const [callUpdateProfile, setCallUpdateProfile] = useState(false)
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -22,7 +23,6 @@ export const ProfileProvider = ({ children }) => {
                     setProfile(data.message);
                     setshowLandingPage(false)
                 } else {
-                    console.log(`Error: ${data.message}`)
                     setshowLandingPage(false)
                 }
             } catch (error) {
@@ -51,10 +51,18 @@ export const ProfileProvider = ({ children }) => {
         }
       };
 
-
+    function ToCallUpdateFile(value) {
+      setCallUpdateProfile(value)
+      if (value) {
+        setProfile(null); 
+      }
+      setTimeout(() => {
+          setCallUpdateProfile(false)
+      }, 1000);
+    }
 
     return (
-        <ProfileContext.Provider value={{ profile, updateProfile }}>
+        <ProfileContext.Provider value={{ profile, updateProfile, ToCallUpdateFile, callUpdateProfile}}>
         {showLandingPage ? <WebsiteStatingPage /> :(children)}
             
         </ProfileContext.Provider>

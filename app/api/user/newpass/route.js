@@ -26,8 +26,12 @@ export async function POST(req) {
         return NextResponse.json({ message: 'Enter the same password in both fields.' }, { status: 400 })
     }
 
-    if (!Password || !Confirm_Pass || !token) {
-        return NextResponse.json({ message: 'Missing Values.' }, { status: 400 })
+    if (!Password || !Confirm_Pass) {
+        return NextResponse.json({ message: 'Missing Values of Password.' }, { status: 400 })
+    }
+
+    if(!token){
+        return NextResponse.json({ message: 'Link is expired or invalid.' }, { status: 400 })
     }
 
     await dbConnect()
@@ -39,7 +43,7 @@ export async function POST(req) {
         const user = await User.findOne({email: email})
 
         if(!user){
-            return NextResponse.json({ message: 'User not found' }, { status: 400 })
+            return NextResponse.json({ message: 'User not exist.' }, { status: 400 })
         }
 
         user.password = HashPassword
@@ -48,7 +52,7 @@ export async function POST(req) {
         return NextResponse.json({ message: 'Password Update Successfully' }, { status: 200 })
     } catch (error) {
         console.log('Error message is: ', error)
-        return NextResponse.json({ message: 'Token is invalid or Expired' }, { status: 500 })
+        return NextResponse.json({ message: 'Link is expired or invalid, Try again.' }, { status: 500 })
     }
 
 }
