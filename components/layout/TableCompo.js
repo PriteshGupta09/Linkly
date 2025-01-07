@@ -11,7 +11,7 @@ import { updateCount } from "@/utils/localstorage-oper";
 
 const TableCompo = (data) => {
 
-  const {loadDatafromLocal, loader, overflowhide} = data
+  const {loadDatafromLocal, loader, overflowhide, DataFromLinkCompo} = data
 
   const [links, setLinks] = useState([]);
   const [linksLocal, setLinksLocal] = useState(fetchDataFromLocalStorage());
@@ -61,6 +61,7 @@ const TableCompo = (data) => {
       loader(false)
       overflowhide(false)
       ToastSucess(deletefromlocal.message)
+      DataFromLinkCompo(true)
       return
     }
 

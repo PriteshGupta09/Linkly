@@ -1,13 +1,17 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext} from 'react'
 import Link from 'next/link'
 import TableCompo from './TableCompo'
 import LinkData from '../main/LinkData'
 import { fetchDataFromLocalStorage } from '@/utils/localstorage-oper'
 import Loader from '../common/Loader'
+import ProfileContext from '@/app/context/ProfileContext'
 
 const Main = ({overflowhide}) => {
     // const [paste, setPaste] = useState(false)
+
+    const {profile} = useContext(ProfileContext)
+
     const [loadDatafromLocal, setLoadDatafromLocal] = useState()
     const [datafromls, setDatafromls] = useState('')
     const [loading, setLoading] = useState(false)
@@ -59,10 +63,10 @@ const Main = ({overflowhide}) => {
                             </div>
                         </div> */}
                         <div className='my-4'>
-                            <p className='text-center'>You can create <span className='text-pink-500'>{5 - datafromls.length}</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>
+                            {profile?<p className='text-center'>Thanks for becoming the part of Linkly, Now you can enjoy <span className='text-pink-500'>Unlimited</span> Usage for Lifetime.</p>:<p className='text-center'>You can create <span className='text-pink-500'>{5 - datafromls.length}</span> more links. <Link href='/register' className='hover_effect'>`Register`</Link> now to enjoy unlimited usage</p>}
                         </div>
                         <div className='w-[85vw]'>
-                            <TableCompo loadDatafromLocal={loadDatafromLocal} loader={loader} overflowhide={overflowhide} />
+                            <TableCompo DataFromLinkCompo={DataFromLinkCompo} loadDatafromLocal={loadDatafromLocal} loader={loader} overflowhide={overflowhide} />
                         </div>
                     </div>
                 </div>

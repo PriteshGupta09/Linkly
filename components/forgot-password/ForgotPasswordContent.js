@@ -56,13 +56,13 @@ const ForgotPasswordContent = () => {
                 </div>
             ) : null}
             <div className='absolute'>
-            {error ? (
-                <div className="w-96 flex-col flex items-center max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 h-80">
-                <h1 className=' text-2xl font-bold my-4 word'>Linkly</h1>
-                <h3 className='text-xl font-bold my-4 text-white text-center'>Link is Expired or Invalid, You have to try again.</h3>
-                <p className='text-red-600 text-xl font-bold my-4'>{message}</p>
-                <div className='my-4'><a href='/login' target='_blank' className='text-blue-600'>Go Back To Login Page</a></div>
-            </div>) : <NewPass />}
+                {error ? (
+                    <div className="w-96 flex-col flex items-center max-w-sm border rounded-lg shadow bg-gray-800 border-gray-700 h-80">
+                        <h1 className=' text-2xl font-bold my-4 word'>Linkly</h1>
+                        <h3 className='text-xl font-bold my-4 text-white text-center'>Link is Expired or Invalid, You have to try again.</h3>
+                        <p className='text-red-600 text-xl font-bold my-4'>{message}</p>
+                        <div className='my-4'><a href='/login' target='_blank' className='text-blue-600'>Go Back To Login Page</a></div>
+                    </div>) : <NewPass />}
             </div>
 
         </>
