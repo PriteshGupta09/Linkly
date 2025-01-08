@@ -66,7 +66,7 @@ const RegisterData = () => {
                     </div>
                 </div>
             ) : null}
-            <div className='h-screen flex items-center'>
+            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
                 <ToastSucess />
                 <ToastMessage />
                 <div className='absolute top-60 right-12'>

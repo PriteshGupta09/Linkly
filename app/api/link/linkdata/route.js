@@ -20,9 +20,12 @@ export async function POST(request) {
         return NextResponse.json({message: 'Their is an Error while Processing Link. Try again Later.'}, {status: 400})
     }
 
+
     await dbConnect()
 
     try {
+
+
         const { data } = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET)
         const email = data.email
 

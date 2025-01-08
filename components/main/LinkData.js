@@ -20,6 +20,29 @@ const LinkData = (loading) => {
   const [showMakeOwnLinkbtn, setShowMakeOwnLinkbtn] = useState(false);
   const [OriginalLink, setOriginalLink] = useState('');
 
+  const checkUrlAvailability = async (url) => {
+    try {
+      const URL = {url}
+      console.log(URL)
+      const response = await fetch("/api/link/isURLValid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(URL),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        return { message: 'URL is correct', success: true };
+      } else {
+        return { message: 'This URL not exist.', success: false };
+      }
+    } catch (error) {
+      return { message: 'Internal Server Error, Try again later.', success: false };
+    }
+};
 
   function handleInputChange(e) {
     const value = e.target.value.trim();
@@ -82,8 +105,17 @@ const LinkData = (loading) => {
     if (!OriginalLink.startsWith('https://')) {
       loader(false)
       overflowhide(false)
-      ToastMessage('Link is invalid.');
+      ToastMessage('Link must be start with https://.');
       return;
+    }
+
+    const isURLValid = await checkUrlAvailability(OriginalLink)
+
+    if(!isURLValid.success){
+      ToastMessage(isURLValid.message);
+      overflowhide(false)
+      loader(false)
+      return
     }
 
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

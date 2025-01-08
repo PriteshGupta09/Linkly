@@ -11,11 +11,11 @@ import { updateCount } from "@/utils/localstorage-oper";
 
 const TableCompo = (data) => {
 
-  const {loadDatafromLocal, loader, overflowhide, DataFromLinkCompo} = data
+  const { loadDatafromLocal, loader, overflowhide, DataFromLinkCompo } = data
 
   const [links, setLinks] = useState([]);
   const [linksLocal, setLinksLocal] = useState(fetchDataFromLocalStorage());
-  const { profile, updateProfile, callUpdateProfile} = useContext(ProfileContext);
+  const { profile, updateProfile, callUpdateProfile } = useContext(ProfileContext);
   // Populate `links` from profile data
   useEffect(() => {
     if (profile?.data) {
@@ -134,7 +134,13 @@ const TableCompo = (data) => {
         </thead>
         <tbody>
           {(links.length > 0 || linksLocal.length > 0) ? (
-            (links.length > 0 ? links : linksLocal).map((link, index) => (
+            // Combine arrays if both have data; otherwise, use the available array
+            (links.length > 0 && linksLocal.length > 0
+              ? [...links, ...linksLocal]
+              : links.length > 0
+                ? links
+                : linksLocal
+            ).map((link, index) => (
               <tr key={index} className="bg-[#181E29] border-b border-gray-700">
                 <th className="px-6 py-4 font-medium text-white w-[27%]">
                   <a

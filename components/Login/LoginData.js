@@ -61,7 +61,7 @@ const LoginData = () => {
             }
         } catch (error) {
             setLoader(false)
-            ToastMessage('Try again Later.')
+            ToastMessage('Internal Server Error, Try again Later.')
         }
     }
 
