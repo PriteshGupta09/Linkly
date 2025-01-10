@@ -69,7 +69,7 @@ const RegisterData = () => {
             <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
                 <ToastSucess />
                 <ToastMessage />
-                <div className='absolute top-60 right-12'>
+                <div className='absolute top-40 -right-60 z-[-12]'>
                     <Cube height='300' width='300' />
                 </div>
                 <form onSubmit={(e) => { handleSubmit(e) }} className="max-w-sm mx-auto w-96 bg-[#181E29] border-black p-10 rounded-lg shadow-2xl">
